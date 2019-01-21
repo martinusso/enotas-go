@@ -1,4 +1,4 @@
-package enotas
+package config
 
 import (
 	"testing"

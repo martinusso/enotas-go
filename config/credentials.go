@@ -1,4 +1,4 @@
-package enotas
+package config
 
 type Credentials struct {
 	ApiKey string
