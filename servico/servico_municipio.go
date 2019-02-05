@@ -30,7 +30,7 @@ func (s ServicoMunicipio) Consulta(uf, city string, pageNumber, pageSize int) ([
 	if response.Error != nil {
 		return servicos.Data, response.Error
 	}
-	fmt.Println(string(response.Body))
+
 	err := json.Unmarshal(response.Body, &servicos)
 	return servicos.Data, err
 }

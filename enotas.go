@@ -14,7 +14,7 @@ type ENotas struct {
 }
 
 func Configure(apiKey string) config.Credentials {
-	return config.NewCredentials(apiKey)
+	return config.Configure(apiKey)
 }
 
 func NewENotas(c config.Credentials) ENotas {
@@ -37,8 +37,9 @@ func (e ENotas) Empresa() empresa.Empresa {
 	return empresa.NewEmpresa(c)
 }
 
-func (e ENotas) NFSe(idEmpresa string) nfse.NFSe {
-	return nfse.NewNFSe(idEmpresa)
+func (e ENotas) NFSe() nfse.NFSe {
+	c := e.getClient()
+	return nfse.NewNFSe(c)
 }
 
 func (e ENotas) ServicosMunicipais(uf, city string, pageNumber, pageSize int) ([]entity.ServicoMunicipio, error) {

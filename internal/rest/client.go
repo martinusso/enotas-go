@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -14,10 +15,11 @@ import (
 
 type Client interface {
 	AddHeader(key, value string)
-	ClearHeaders()
+	Delete(url string) Response
 	Get(url string) Response
 	Post(url string, body []byte) Response
 	Put(url string, body []byte) Response
+	Send(method, url string, body io.Reader) Response
 }
 
 type client struct {
@@ -34,21 +36,26 @@ func NewClient(credentials config.Credentials) *client {
 	return c
 }
 
+func (r *client) Delete(url string) Response {
+	return r.Send(http.MethodDelete, url, nil)
+}
+
 func (r *client) Get(url string) Response {
-	return r.Send("GET", url, nil)
+	return r.Send(http.MethodGet, url, nil)
 }
 
 func (r *client) Post(url string, body []byte) Response {
 	r.AddHeader("Content-Type", "application/json")
-	return r.Send("POST", url, body)
+	return r.Send(http.MethodPost, url, bytes.NewReader(body))
 }
 
 func (r *client) Put(url string, body []byte) Response {
-	return r.Send("PUT", url, body)
+	r.AddHeader("Content-Type", "application/json")
+	return r.Send(http.MethodPut, url, bytes.NewReader(body))
 }
 
-func (c *client) Send(method, url string, body []byte) Response {
-	req, err := http.NewRequest(method, url, bytes.NewReader(body))
+func (c *client) Send(method, url string, body io.Reader) Response {
+	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return Response{Error: err}
 	}
@@ -65,8 +72,8 @@ func (c *client) Send(method, url string, body []byte) Response {
 	if err != nil {
 		return Response{Error: err}
 	}
-	if res.StatusCode == http.StatusBadRequest {
-		return Response{Error: errors.New(c.errorMessage(content))}
+	if res.StatusCode != http.StatusOK {
+		return Response{Code: res.StatusCode, Error: errors.New(c.errorMessage(content))}
 	}
 	return Response{
 		Body:  content,
@@ -81,19 +88,12 @@ func (c *client) AddHeader(key, value string) {
 	c.headers[key] = value
 }
 
-func (c *client) ClearHeaders() {
-	for k := range c.headers {
-		delete(c.headers, k)
-	}
-}
-
 func (c client) errorMessage(content []byte) string {
 	var err []struct {
 		Codigo   string `json:"codigo"`
 		Mensagem string `json:"mensagem"`
 	}
 	json.Unmarshal(content, &err)
-	fmt.Println(string(content))
 	var ret []string
 	for _, e := range err {
 		s := fmt.Sprintf("%s %s", e.Codigo, e.Mensagem)

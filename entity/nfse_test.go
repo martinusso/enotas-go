@@ -7,7 +7,7 @@ import (
 func TestNewNFSe(t *testing.T) {
 	end := Endereco{}
 	cliente := NewCliente("Mony", "89460862039", end)
-	servico := NewServico("Serviço prestado", "1234567890")
+	servico := NewServico("Serviço prestado", "1234567890", "1234", 5)
 	nfse := NewNFSe(cliente, servico, 100, Homologacao)
 
 	if idExterno := nfse.IdExterno; len(idExterno) != 36 {

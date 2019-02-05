@@ -9,7 +9,7 @@ import (
 func TestNewENotas(t *testing.T) {
 	expected := "1234567890"
 
-	c := config.NewCredentials(expected)
+	c := config.Configure(expected)
 	n := NewENotas(c)
 	if apiKey := n.Credentials().ApiKey; apiKey != expected {
 		t.Errorf("Expected '%s' got '%s'", expected, apiKey)

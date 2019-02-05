@@ -15,9 +15,11 @@ type Servico struct {
 }
 
 // NewService cria um novo serviço
-func NewServico(d string, c string) Servico {
+func NewServico(d string, c string, cnae string, iss float64) Servico {
 	return Servico{
 		Descricao:              d,
 		CodigoServicoMunicipio: c,
+		CNAE:                   cnae,
+		AliquotaISS:            iss,
 	}
 }

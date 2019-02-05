@@ -6,11 +6,11 @@ package entity
 type Endereco struct {
 	Logradouro       string `json:"logradouro"`
 	Numero           string `json:"numero"`
-	Complemento      string `json:"complemento"`
+	Complemento      string `json:"complemento,omitempty"`
 	Bairro           string `json:"bairro"`
 	CEP              string `json:"cep"`
 	Cidade           string `json:"cidade"`
 	UF               string `json:"uf"`
-	CodigoIbgeUF     int    `json:"codigoIbgeUf"`
-	CodigoIbgeCidade int    `json:"codigoIbgeCidade"`
+	CodigoIbgeUF     int    `json:"codigoIbgeUf,omitempty"`
+	CodigoIbgeCidade int    `json:"codigoIbgeCidade,omitempty"`
 }
